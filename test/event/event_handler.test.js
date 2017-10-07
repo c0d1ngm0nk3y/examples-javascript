@@ -14,8 +14,9 @@ describe('event_handler', function() {
           event = e
         };
         var obj = factory.createTypeA();
-        obj.registerEventHandler(spy);
-        obj.fire({});
+        var eventHandler = {"callback": spy};
+        obj.registerEventHandler(eventHandler);
+        eventHandler.registeredEventHandler({"name": "myEvent"});
 
         event.should.be.an('Object');
     });
@@ -26,8 +27,9 @@ describe('event_handler', function() {
           event = e
         };
         var obj = factory.createTypeA();
-        obj.registerEventHandler(spy);
-        obj.fire({});
+        var eventHandler = {"callback": spy};
+        obj.registerEventHandler(eventHandler);
+        eventHandler.registeredEventHandler({});
 
         event.source.should.be.equals('A');
     });
@@ -39,9 +41,10 @@ describe('event_handler', function() {
               event = e
             };
             var obj = factory.createTypeB();
-            obj.registerEventHandler(spy);
-            obj.fire({});
-    
+            var eventHandler = {"callback": spy};
+            obj.registerEventHandler(eventHandler);
+            eventHandler.registeredEventHandler({"name": "myEvent"});
+        
             event.source.should.be.equals('B');
         });});        
   });

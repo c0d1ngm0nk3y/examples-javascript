@@ -1,19 +1,16 @@
 function AClass() {
-    var _eventHandler = undefined;
+    function registerEventHandler(oEventHandler) {
+        var self = this, fnEventHandler;
 
-    function fire(event) {
-        event.source = "A";
-        if(_eventHandler) {
-            _eventHandler(event);
+        function symbolEventHandler(oEvent) {
+            oEvent.source = "A";
+            fnEventHandler.apply(self, arguments);
         }
-    }
-
-    function registerEventHandler(eventHandler) {
-        _eventHandler = eventHandler;
+        fnEventHandler = oEventHandler.callback
+        oEventHandler.registeredEventHandler = symbolEventHandler;
     }
 
     return {
-        fire,
         registerEventHandler
     }
 }
@@ -28,14 +25,14 @@ function createTypeB() {
 
     var oldRegister = obj.registerEventHandler
     function newRegister(eventHandler) {
-        //do not register the handler, but a proxy that first changes the event
-        function eventHandlerProxy(event) {
+        var oldCallback = eventHandler.callback;
+        function callbackProxy(event) {
             event.source = "B";
-            eventHandler(event);
+            oldCallback(event);
         }
+        eventHandler.callback = callbackProxy;
 
-        //call the original register within the new one
-        oldRegister(eventHandlerProxy);
+        oldRegister(eventHandler);
     }
     //switch register method
     obj.registerEventHandler = newRegister;
